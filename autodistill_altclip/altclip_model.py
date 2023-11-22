@@ -6,6 +6,7 @@ import supervision as sv
 from autodistill.detection import CaptionOntology, DetectionBaseModel
 from PIL import Image
 from transformers import AltCLIPModel, AltCLIPProcessor
+import torch
 
 HOME = os.path.expanduser("~")
 
@@ -44,3 +45,18 @@ class AltCLIP(DetectionBaseModel):
             class_id=np.array([prompts.index(i[0]) for i in probs]),
             confidence=np.array([i[1] for i in probs]),
         )
+    
+    def embed_text(self, input: str) -> np.ndarray:
+        with torch.no_grad():
+            inputs = self.processor(text=input, return_tensors="pt")
+            text_features = self.model.get_text_features(**inputs)
+
+            return text_features.cpu().numpy()
+    
+    def embed_image(self, input: str) -> np.ndarray:
+        image = Image.open(input)
+        with torch.no_grad():
+            inputs = self.processor(images=image, return_tensors="pt")
+            image_features = self.model.get_image_features(**inputs)
+
+            return image_features.cpu().numpy()
