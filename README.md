@@ -50,7 +50,7 @@ base_model = AltCLIP(
     )
 )
 
-results = base_model.predict("coffeeshop.jpg")
+results = base_model.predict("construction.jpg")
 
 print(results)
 ```

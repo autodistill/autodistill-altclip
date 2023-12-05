@@ -6,6 +6,7 @@ import supervision as sv
 from autodistill.detection import CaptionOntology, DetectionBaseModel
 from PIL import Image
 from transformers import AltCLIPModel, AltCLIPProcessor
+from autodistill.helpers import load_image
 import torch
 
 HOME = os.path.expanduser("~")
@@ -21,7 +22,7 @@ class AltCLIP(DetectionBaseModel):
         self.processor = AltCLIPProcessor.from_pretrained("BAAI/AltCLIP")
 
     def predict(self, input: str, confidence: int = 0.5) -> sv.Classifications:
-        image = Image.open(input)
+        image = load_image(input, return_format="PIL")
 
         prompts = ["a photo of" + prompt for prompt in self.ontology.prompts()]
 
